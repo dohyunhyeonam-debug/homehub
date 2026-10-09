@@ -7,35 +7,34 @@ interface AutoStartSetupProps {
 }
 
 export const AutoStartSetup: React.FC<AutoStartSetupProps> = ({ isOpen, onClose }) => {
+  const TARGET_URL = 'https://homehub-livid-zeta.vercel.app/';
   const [copiedCmd, setCopiedCmd] = useState(false);
   const [copiedStartup, setCopiedStartup] = useState(false);
 
   if (!isOpen) return null;
 
-  const currentUrl = window.location.href;
-
   // Windows batch script content that launches Chrome or Edge in kiosk / app mode
   const batchScriptContent = `@echo off
 rem Living Room Hub Windows Auto-Start Script
-echo Starting Living Room Hub...
+echo Starting Living Room Hub (${TARGET_URL})...
 timeout /t 5 /nobreak >nul
 
 rem Try Edge kiosk mode first (default on Windows 10/11)
 where msedge >nul 2>nul
 if %errorlevel% equ 0 (
-    start msedge --start-fullscreen --app="${currentUrl}"
+    start msedge --start-fullscreen --app="${TARGET_URL}"
     exit
 )
 
 rem Try Chrome
 where chrome >nul 2>nul
 if %errorlevel% equ 0 (
-    start chrome --start-fullscreen --app="${currentUrl}"
+    start chrome --start-fullscreen --app="${TARGET_URL}"
     exit
 )
 
 rem Fallback to default browser
-start "" "${currentUrl}"
+start "" "${TARGET_URL}"
 `;
 
   const downloadBatchFile = () => {
@@ -57,7 +56,7 @@ start "" "${currentUrl}"
   };
 
   const copyKioskCommand = () => {
-    navigator.clipboard.writeText(`msedge --start-fullscreen --app="${currentUrl}"`);
+    navigator.clipboard.writeText(`msedge --start-fullscreen --app="${TARGET_URL}"`);
     setCopiedCmd(true);
     setTimeout(() => setCopiedCmd(false), 2000);
   };
@@ -79,16 +78,22 @@ start "" "${currentUrl}"
           <div>
             <h2 className="text-base font-bold text-neutral-100">노트북 부팅 시 자동 실행 설정</h2>
             <p className="text-xs text-neutral-400">
-              노트북이 켜지거나 재부팅되면 자동으로 이 화면이 전체화면으로 실행됩니다.
+              노트북이 켜지거나 재부팅되면 자동으로 <span className="text-neutral-200 font-mono">homehub-livid-zeta.vercel.app</span>이 전체화면으로 실행됩니다.
             </p>
           </div>
         </div>
 
-        <div className="mt-5 space-y-4 text-xs">
+        {/* Target URL indicator */}
+        <div className="mt-3 px-3 py-2 rounded-lg bg-neutral-950 border border-neutral-800 flex items-center justify-between text-xs font-mono">
+          <span className="text-neutral-500">실행 대상 URL:</span>
+          <span className="text-neutral-200 font-medium truncate ml-2">{TARGET_URL}</span>
+        </div>
+
+        <div className="mt-4 space-y-4 text-xs">
           {/* Method 1: Download Batch File (Easiest) */}
           <div className="p-4 rounded-xl bg-neutral-950 border border-neutral-800">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-semibold text-neutral-200">방법 1. 자동 실행 스크립트 파일 넣기 (가장 추천)</span>
+              <span className="font-semibold text-neutral-200">방법 1. 자동 실행 스크립트 파일 넣기 (추천)</span>
               <button
                 onClick={downloadBatchFile}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-white text-neutral-950 font-semibold rounded-lg transition-colors cursor-pointer"
@@ -137,7 +142,7 @@ start "" "${currentUrl}"
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-5 flex justify-end">
           <button
             onClick={onClose}
             className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium rounded-lg text-xs cursor-pointer transition-colors"
