@@ -4,9 +4,10 @@ import { BatteryState } from '../hooks/useBattery';
 
 interface MainClockHeroProps {
   battery: BatteryState;
+  isNightMode?: boolean;
 }
 
-export const MainClockHero: React.FC<MainClockHeroProps> = ({ battery }) => {
+export const MainClockHero: React.FC<MainClockHeroProps> = ({ battery, isNightMode = false }) => {
   const [time, setTime] = useState(new Date());
   const [is24Hour, setIs24Hour] = useState(true);
 
@@ -65,15 +66,27 @@ export const MainClockHero: React.FC<MainClockHeroProps> = ({ battery }) => {
 
       {/* Massive Main Clock Display (압도적 중심) */}
       <div className="py-2 sm:py-6 flex items-baseline justify-center gap-2 sm:gap-4">
-        <span className="text-8xl sm:text-9xl md:text-[11rem] lg:text-[13rem] leading-none font-black font-mono tracking-tighter text-neutral-100 tabular-nums drop-shadow-md">
+        <span
+          className={`text-8xl sm:text-9xl md:text-[11rem] lg:text-[13rem] leading-none font-black font-mono tracking-tighter tabular-nums drop-shadow-md transition-colors duration-1000 ${
+            isNightMode ? 'text-amber-500/90' : 'text-neutral-100'
+          }`}
+        >
           {displayHours}:{minutes}
         </span>
         <div className="flex flex-col items-start pb-2 sm:pb-6">
-          <span className="text-2xl sm:text-4xl lg:text-5xl font-bold font-mono text-neutral-500 tabular-nums">
+          <span
+            className={`text-2xl sm:text-4xl lg:text-5xl font-bold font-mono tabular-nums transition-colors duration-1000 ${
+              isNightMode ? 'text-amber-600/80' : 'text-neutral-500'
+            }`}
+          >
             :{seconds}
           </span>
           {!is24Hour && (
-            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-neutral-500 mt-1">
+            <span
+              className={`text-xs sm:text-sm font-semibold uppercase tracking-widest mt-1 transition-colors duration-1000 ${
+                isNightMode ? 'text-amber-600/70' : 'text-neutral-500'
+              }`}
+            >
               {period}
             </span>
           )}

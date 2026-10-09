@@ -1,5 +1,6 @@
 import React from 'react';
-import { Maximize, Minimize, Moon, Sun, ShieldCheck, QrCode, Power } from 'lucide-react';
+import { Maximize, Minimize, Moon, Sun, ShieldCheck, QrCode, Power, Camera } from 'lucide-react';
+import { AmbientLightState } from '../hooks/useAmbientLightSensor';
 
 interface TopBarProps {
   isScreensaver: boolean;
@@ -10,6 +11,7 @@ interface TopBarProps {
   toggleWakeLock: () => void;
   onOpenAutoStartModal: () => void;
   onOpenWifiModal: () => void;
+  ambientLight: AmbientLightState;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -21,6 +23,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   toggleWakeLock,
   onOpenAutoStartModal,
   onOpenWifiModal,
+  ambientLight,
 }) => {
   return (
     <header className="flex items-center justify-between px-6 py-3.5 border-b border-neutral-800/60 bg-neutral-950/60 backdrop-blur-md sticky top-0 z-40 select-none">
@@ -36,6 +39,30 @@ export const TopBar: React.FC<TopBarProps> = ({
 
       {/* Action controls */}
       <div className="flex items-center gap-2">
+        {/* Camera Ambient Light Sensor Toggle */}
+        <button
+          onClick={ambientLight.toggleSensor}
+          title={
+            ambientLight.isEnabled
+              ? `조도 감지 켜짐: ${ambientLight.brightness}% (${ambientLight.isDark ? '소등 감지됨 / 나이트 모드' : '점등 상태'})`
+              : '카메라로 거실 불 켜짐/꺼짐을 감지하여 자동 밝기 및 나이트 모드 실행'
+          }
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer border ${
+            ambientLight.isEnabled
+              ? ambientLight.isDark
+                ? 'bg-amber-950/40 text-amber-300 border-amber-600/40 shadow-sm'
+                : 'bg-neutral-800 text-neutral-200 border-neutral-700'
+              : 'bg-neutral-950 text-neutral-500 border-neutral-800 hover:text-neutral-300'
+          }`}
+        >
+          <Camera className={`w-3.5 h-3.5 ${ambientLight.isEnabled ? (ambientLight.isDark ? 'text-amber-400' : 'text-neutral-200') : 'text-neutral-500'}`} />
+          <span>
+            {ambientLight.isEnabled
+              ? `${ambientLight.isDark ? '🌙' : '💡'} 조도 ${ambientLight.brightness}%`
+              : '조도 센서'}
+          </span>
+        </button>
+
         <button
           onClick={onOpenAutoStartModal}
           title="부팅 시 자동 실행 설정"
